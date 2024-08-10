@@ -1,85 +1,111 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="content-wrapper">
-  <div class="page-header">
-    <h3 class="page-title">Frames</h3>
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page">
-          <a href="{% url 'frames-add' %}" type="button"
-            class="btn btn-gradient-primary btn-rounded btn-fw"><span class="mdi mdi-plus"></span> Add Frame</a>
-        </li>
-      </ol>
-    </nav>
-  </div>
-  <div class="row">
-    <div class="col-lg-12 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body">
-          <h4 class="card-title">Frames List</h4>
-          <p>
-            <select class="form-select select" id="devices_select">
-              <option value="0">All Devices</option>
-              {% for device in devices %}
-              <option value="{{ device.id }}">{{ device.name }}</option>
-              {% endfor %}
-            </select>
-          </p>
-          <table id="frames-table" class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Position</th>
-                <th>Photo</th>
-                <th>Device</th>
-                <th>Price</th>
-                <th>Date Created</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {% if frames %}
-              {% for frame in frames %}
-              <tr data-device-id="{{ frame.device_id.id }}">
-                <td>{{ frame.title }}</td>
-                <td>{{ frame.position }}</td>
-                <td>
-                  <img src="{{ frame.photo.url }}" alt="Photo" />
-                </td>
-                <td>{{ frame.device_id.name }}</td>
-                <td class="text-danger">
-                  {{ frame.price|floatformat }} <i class="mdi mdi-cash"></i>
-                </td>
-                <td>{{ frame.created_at }}</td>
-                <td>
-                  <div class="row">
-                    <div class="col-sm-6 text-end">
-                      <a href="{% url 'frames-edit' frame.id %}" type="button"
-                        class="btn btn-gradient-primary btn-rounded btn-fw"><span
-                          class="mdi mdi-pencil"></span> Edit</a>
-                    </div>
-                    <div class="col-sm-6 text-start">
-                      <a href="{% url 'frames-delete' frame.id %}" type="button"
-                        class="delete-frame btn btn-danger btn-rounded"><span
-                          class="mdi mdi-trash-can"></span> Delete</a>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              {% endfor %}
-              {% else %}
-              <p class="card-description">🎉 Yay, Let setup first frame!</p>
-              {% endif %}
-            </tbody>
-          </table>
+  <div class="content-wrapper">
+    <div class="page-header">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="#">Devices</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">Device 1</li>
+        </ol>
+      </nav>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item active" aria-current="page">
+            <a href="{% url 'frames-add' %}" type="button" class="btn btn-gradient-primary btn-rounded btn-fw"><span class="mdi mdi-plus"></span> Add Frame</a>
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <!-- Step Progress Tracker -->
+    <div class="row">
+      <div class="stepper-wrapper">
+        <div class="stepper-item completed">
+          <div class="step-counter">1</div>
+          <div class="step-name">Frame</div>
+        </div>
+        <div class="stepper-item">
+          <div class="step-counter">2</div>
+          <div class="step-name">Second</div>
+        </div>
+        <div class="stepper-item active">
+          <div class="step-counter">3</div>
+          <div class="step-name">Third</div>
+        </div>
+        <div class="stepper-item">
+          <div class="step-counter">4</div>
+          <div class="step-name">Forth</div>
+        </div>
+      </div>
+    </div>
+    <!-- Step Progress Tracker -->
+
+    <div class="row">
+      <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Frames List</h4>
+            <p>
+              <select class="form-select select" id="devices_select">
+                <option value="0">All Devices</option>
+                {% for device in devices %}
+                  <option value="{{ device.id }}">{{ device.name }}</option>
+                {% endfor %}
+              </select>
+            </p>
+            <table id="frames-table" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Position</th>
+                  <th>Photo</th>
+                  <th>Device</th>
+                  <th>Price</th>
+                  <th>Date Created</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if frames %}
+                  {% for frame in frames %}
+                    <tr data-device-id="{{ frame.device_id.id }}">
+                      <td>{{ frame.title }}</td>
+                      <td>{{ frame.position }}</td>
+                      <td>
+                        <img src="{{ frame.photo.url }}" alt="Photo" />
+                      </td>
+                      <td>{{ frame.device_id.name }}</td>
+                      <td class="text-danger">
+                        {{ frame.price|floatformat }} <i class="mdi mdi-cash"></i>
+                      </td>
+                      <td>{{ frame.created_at }}</td>
+                      <td>
+                        <div class="row">
+                          <div class="col-sm-6 text-end">
+                            <a href="{% url 'frames-edit' frame.id %}" type="button" class="btn btn-gradient-primary btn-rounded btn-fw"><span class="mdi mdi-pencil"></span> Edit</a>
+                          </div>
+                          <div class="col-sm-6 text-start">
+                            <a href="{% url 'frames-delete' frame.id %}" type="button" class="delete-frame btn btn-danger btn-rounded"><span class="mdi mdi-trash-can"></span> Delete</a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                {% else %}
+                  <p class="card-description">🎉 Yay, Let setup first frame!</p>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<script>
+  <script>
     function getURLParams(url) {
       return Object.fromEntries(new URL(url).searchParams.entries())
     }
