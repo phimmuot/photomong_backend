@@ -84,6 +84,13 @@ class LayoutByBackgroundAPI(APIView):
         layouts = Layout.objects.filter(background=background.id, frame=frame.id)
         serializer = LayoutSerializer(layouts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class LayoutGroupByBackgroundAPI(APIView):
+    def get(self, request, id, *args, **kwargs):
+        background = Background.objects.get(pk=id)
+        layouts = Layout.objects.filter(background=background.id)
+        serializer = LayoutSerializer(layouts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         
 class LayoutList(LoginRequiredMixin, ListView):
     def get(self, request):                

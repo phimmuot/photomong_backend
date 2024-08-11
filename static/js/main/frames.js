@@ -2,6 +2,7 @@
 let scrollAmount = 0;
 const scrollStep = 220;
 
+// Load frames at start
 $(document).ready(function () {    
     // Load frames
     loadFrames();
@@ -177,7 +178,6 @@ function loadFrames() {
         }
     })
 }
-
 
 function previewPhoto(event) {
     var input = event.target;

@@ -251,4 +251,18 @@
     cursor: pointer;
     font-size: 12px;
 }
+
+#example-image {
+    background-image: url('http://3.26.21.10:8000/media/backgrounds/seasons.png');
+    height: 400px;
+    max-width: 400px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#example-image:hover {
+    background-image: url('http://3.26.21.10:8000/media/backgrounds/seasons_click.png');
+}
+
 /** Image List **/
