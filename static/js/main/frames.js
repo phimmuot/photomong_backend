@@ -146,6 +146,11 @@ $('body').on('click', '.nav-button.right', function () {
     imageList.css('transform', 'translateX(-' + scrollAmount + 'px)');
 });
 
+$('body').on('click', '.image-frame', function () {
+    var frameId = $(this).data('frame-id');
+    window.location.href = '/backgrounds/?frame=' + frameId;
+});
+
 function loadFrames() {
     $('.api-loading').removeClass('d-none');
     $('.add-frame-container').addClass('d-none');
@@ -160,7 +165,7 @@ function loadFrames() {
             frames.forEach(frame => {
                 $('.image-list').append(
                     '<div class="image-container">' +
-                    '<img src="' + frame.photo + '" alt="frame" class="image-frame">' +
+                    '<img src="' + frame.photo + '" alt="frame" class="image-frame" data-frame-id="' + frame.id + '">' +
                     '<div class="image-title">' + frame.title + '</div>' +
                     '<div class="action-buttons">' +
                     '<button class="edit-button">' +

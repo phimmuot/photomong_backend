@@ -33,11 +33,13 @@ class BackgroundAPI(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)     
     
     def post(self, request, *args, **kwargs):
-        serializer = BackgroundSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        form = BackgroundForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"message": "Background created successfully"}, status=201)
+        else:
+            messages.error(request, form.errors)
+        return JsonResponse({"message": "Failed to create background"}, status=400)
     
 class BackgroundDetailAPI(APIView):
 
@@ -66,9 +68,11 @@ class BackgroundDetailAPI(APIView):
 class BackgroundList(LoginRequiredMixin, ListView):
     
     def get(self, request):
+        frameId = request.GET.get('frame') or 0
+        frame = Frame.objects.get(id=frameId)
         backgrounds = Background.objects.all()
         frames = Frame.objects.all()
-        return render(request, 'backgrounds/list.html', {'positions': BACKGROUND_POSITIONS, 'backgrounds': backgrounds, 'frames': frames, 'position_list': POSITION_LIST})
+        return render(request, 'backgrounds/list.html', {'positions': BACKGROUND_POSITIONS, 'backgrounds': backgrounds, 'frames': frames, 'frame': frame, 'frameId': int(frameId), 'position_list': POSITION_LIST})
     
     def post(self, request):
         form = BackgroundForm(request.POST, request.FILES)

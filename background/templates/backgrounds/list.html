@@ -26,7 +26,7 @@
         </a>
       </div>
       <div class="stepper-item completed">
-        <a href="{% url 'backgrounds' %}"
+        <a href="{% url 'backgrounds' %}?frame=1"
           class="text-decoration-none">
           <div class="step-counter">2</div>
           <div class="step-name">Stylist</div>
@@ -245,11 +245,24 @@
     <div class="col-lg-12 grid-margin stretch-card">
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title">Layout</h4>
-          <div class="float-end mb-5">
-            <a href="javascript:void(0)" type="button"
-              class="add-layout btn btn-gradient-primary btn-rounded btn-fw"><span
-                class="mdi mdi-plus"></span> Add Layout</a>
+          <h4 class="card-title">
+            Layout
+          </h4>
+          <div class="d-flex justify-content-between">
+            <div class="row col-sm-2">
+              <select class="choose-frame-layout form-select form-control-sm">
+                <option value="0">--Select Frame--</option>
+                {% for frame in frames %}
+                <option value="{{ frame.id }}" {% if frame.id == frameId %}
+                  selected {% endif %}>{{ frame.title }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="float-end mb-5">
+              <a href="javascript:void(0)" type="button"
+                class="add-layout btn btn-gradient-primary btn-rounded btn-fw"><span
+                  class="mdi mdi-plus"></span> Add Layout</a>
+            </div>
           </div>
           <div class="image-list-container">
             <div class="api-loading spinner-border text-primary mx-auto d-none"
@@ -273,14 +286,65 @@
   <div class="col-12 grid-margin stretch-card add-layout-container d-none">
     <div class="card">
       <div class="card-body">
-        <button class="btn-close float-end" type="button"></button>
-        <h4 class="card-title">Create Layout</h4>        
-        <form method="post" enctype="multipart/form-data" class="forms-sample">
+        <button class="btn-close float-end cancel-add-layout" type="button"></button>
+        <h4 class="card-title">Create Layout</h4>
+        <form id="upload-layout-form" method="post"
+          enctype="multipart/form-data" class="forms-sample">
           {% csrf_token %}
           <div class="form-group">
             <label for="title">Title</label>
             <input type="text" class="form-control" id="title" name="title"
-              placeholder="Title" />
+              placeholder="Example: Season-4cut-1" />
+          </div>
+          <input type="hidden" name="position" id="position"
+            value="{{ position_list.0 }}" />
+          <input type="hidden" name="frame" id="frame"
+            value="{{ frame_list.0.title }}" />
+          <input type="hidden" name="background" id="background"
+            value="{{ background_list.0.id }}" />
+          <div class="form-group">
+            <label>Photo</label>
+            <input class="form-control add-photo-input" type="file" id="photo" name="photo" />
+            <img class="photo_preview" id="photo_preview" src="#"
+              alt="Photo Preview" style="display: none;" /><br />
+          </div>
+          <div class="form-group">
+            <label>Photo Cover</label>
+            <input class="form-control add-photo-input" type="file" id="photo_cover" name="photo_cover"/>
+            <img class="photo_preview" id="photo_cover_preview" src="#"
+              alt="Photo Cover Preview" style="display: none;" /><br />
+          </div>
+          <div class="form-group">
+            <label>Photo Full</label>
+            <input class="form-control add-photo-input" type="file" id="photo_full" name="photo_full"/>
+            <img class="photo_preview" id="photo_full_preview" src="#"
+              alt="Photo Full Preview" style="display: none;" /><br />
+          </div>
+          <div class="row d-flex justify-content-center">
+            <button type="submit"
+              class="btn btn-gradient-primary col-sm-2">Submit</button>
+            <button class="btn btn-light col-sm-2" id="cancel-add-layout"
+              type="button">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Add Layout -->
+
+  <!-- Edit Layout -->
+  <div class="col-12 grid-margin stretch-card edit-layout-container d-none">
+    <div class="card">
+      <div class="card-body">
+        <button class="float-end btn-close cancel-edit-layout"></button>
+        <h4 class="card-title">Edit Layout</h4>                
+        <form id="edit-layout-form" method="post" enctype="multipart/form-data" class="forms-sample">
+          {% csrf_token %}
+          <input type="hidden" id="layout_id" name="layout_id">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" name="title"
+              placeholder="Title" value="" />
           </div>
           <div class="form-group">
             <label for="position">Position</label>
@@ -288,6 +352,15 @@
               aria-label="Default select example">
               {% for p in position_list %}
               <option value="{{ p }}">{{ p }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="frame">Background</label>
+            <select name="background" id="background" class="form-select"
+              aria-label="Default select example">
+              {% for background in backgrounds %}
+              <option value="{{ background.id }}">{{ background.title }}</option>
               {% endfor %}
             </select>
           </div>
@@ -301,50 +374,41 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="frame">Background</label>
-            <select name="background" id="background" class="form-select"
-              aria-label="Default select example">
-              {% for background in backgrounds %}
-              <option value="{{ background.id }}">{{ background.title
-                }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group">
             <label>Photo</label>
-            <input class="form-control" type="file" id="photo" name="photo"
+            <input class="form-control edit-photo-input" type="file" id="photo" name="photo"
               onchange="previewPhoto(event, 'photo_preview')" />
-            <img class="photo_preview" id="photo_preview" src="#"
-              alt="Photo Preview" style="display: none;" /><br />
+            <img class="photo_preview" id="photo_preview"
+              src="" alt="Photo Preview"><br>
           </div>
           <div class="form-group">
             <label>Photo Cover</label>
-            <input class="form-control" type="file" id="photo_cover"
+            <input class="form-control edit-photo-input" type="file" id="photo_cover"
               name="photo_cover"
               onchange="previewPhoto(event, 'photo_cover_preview')" />
-            <img class="photo_preview" id="photo_cover_preview" src="#"
-              alt="Photo Cover Preview" style="display: none;" /><br />
+            <img class="photo_preview" id="photo_cover_preview"
+              src="" alt="Photo Preview"><br>
           </div>
           <div class="form-group">
             <label>Photo Full</label>
-            <input class="form-control" type="file" id="photo_full"
+            <input class="form-control edit-photo-input" type="file" id="photo_full"
               name="photo_full"
               onchange="previewPhoto(event, 'photo_full_preview')" />
-            <img class="photo_preview" id="photo_full_preview" src="#"
-              alt="Photo Full Preview" style="display: none;" /><br />
+            <img class="photo_preview" id="photo_full_preview"
+              src="" alt="Photo Preview"><br>
           </div>
           <div class="row d-flex justify-content-center">
             <button type="submit"
             class="btn btn-gradient-primary col-sm-2">Submit</button>
-            <button class="btn btn-light col-sm-2" id="cancel-add-layout" type="button">Cancel</button>          
+            <button class="btn btn-light btn-outline-secondary col-sm-2">Close</button>        
           </div>
         </form>
       </div>
     </div>
   </div>
-  <!-- Add Layout -->
+  <!-- Edit Layout -->
 
 </div>
+
 <!-- Toast -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
   <div id="liveToast" class="toast" role="alert" aria-live="assertive"
